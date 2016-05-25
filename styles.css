@@ -1,0 +1,54 @@
+textarea{
+    resize: none;
+}
+.hvr-shutter-in-horizontal{
+    color: white;
+}
+.hvr-shutter-in-horizontal::before{    
+    background: rgba(255, 255, 255, 0.1);
+}
+.hvr-shutter-in-horizontal:active .hvr-icon-down:before, .hvr-shutter-in-horizontal:focus .hvr-icon-down:before, .hvr-shutter-in-horizontal:hover .hvr-icon-down:before {
+    -webkit-animation-name: hvr-icon-down;
+    animation-name: hvr-icon-down;
+    -webkit-animation-duration: .75s;
+    animation-duration: .75s;
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+}
+.hvr-icon-down:before{
+    top: -10px;
+    font-style: normal;
+}
+.navbar-default .container .navbar-header{
+    width: 5%;
+    margin-top: -5px;
+}
+#drop_zone {
+    border: 2px dashed #bbb;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 70px;
+    text-align: center;
+    font: 20pt bold 'Vollkorn';
+    color: #bbb;
+}
+.contenedor-drop-zone{
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+.options .btn{
+    width: 100%;
+    border-radius: 5px;
+    color: white;
+}
+.options .btn::before{
+    width: 100%;
+    border-radius: 5px;
+}
+.hvr-shutter-out-horizontal::before{ 
+    background: rgba(0, 0, 0, 0.1);
+}
+.hvr-shutter-out-horizontal{
+    background: #2098d1;   
+}
