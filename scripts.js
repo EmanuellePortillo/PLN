@@ -32,8 +32,31 @@ function handleDragOver(evt) {
     evt.preventDefault();
     evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
 }
-jQuery
 // Setup the dnd listeners.
 var dropZone = document.getElementById('drop_zone');
 dropZone.addEventListener('dragover', handleDragOver, false);
 dropZone.addEventListener('drop', handleFileSelect, false);
+var ban_stemmer = false;
+jQuery(document).ready(function(e){
+    function make_stemmer(){
+        if(ban_stemmer == false){
+            var words = jQuery('#texto').val().split(" "); ///([\wáéíóú]+) ?\n\r?/gi
+            var new_words = [];
+            for (var i = 0; i < words.length; i++) {
+                var element = words[i];
+                new_words.push(Stemmer.stemm(element));
+            }
+            jQuery('#texto').val(new_words.join(" "));
+            ban_stemmer = true;
+        }
+    }
+    jQuery('.btn>input').click(function(evt){
+        if(jQuery('#texto').val() != ''){
+            if(this.id == 'stemmer'){
+                make_stemmer();
+            }
+            jQuery(this).prop('checked',true);
+            jQuery(this).addClass("active");
+        }
+    });
+})
