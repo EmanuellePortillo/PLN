@@ -52,3 +52,6 @@ textarea{
 .hvr-shutter-out-horizontal{
     background: #2098d1;   
 }
+input[type="checkbox"]{
+    visibility: hidden;
+}
