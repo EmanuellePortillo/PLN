@@ -66,7 +66,7 @@ jQuery(document).ready(function(e){
         }
     });
    jQuery('#del-dig').click(function(e){
-    var re = /([^a-zA-Z0-9@()_-]\d+)([^a-zA-Z0-9@()_-])/g; 
+    var re = /([^a-zA-Z0-9@_-]\d+)([^a-zA-Z0-9@_-])/g; 
     var str =jQuery('#texto').val();
     var m;
     var new_str;
