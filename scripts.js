@@ -65,4 +65,33 @@ jQuery(document).ready(function(e){
             jQuery(this).addClass("active");
         }
     });
+   jQuery('#del-dig').click(function(e){
+    var re = /([^a-zA-Z0-9@_-]\d+)([^a-zA-Z0-9@_-])/g; 
+    var str =jQuery('#texto').val();
+    var m;
+    var new_str;
+    if(str!=""){
+       str = str.replace(/\n|\r/g," *@@* ");
+       new_str = str.replace(re," ");
+       while(new_str.indexOf(' *@@* ')!=-1){
+           new_str = new_str.replace(" *@@* ","\n");
+       }
+    }
+    jQuery('#texto').val(new_str) 
+    });
+    jQuery('#del-gui').click(function(e){
+    var re = /(\W-+)/g; 
+    var str =jQuery('#texto').val();
+    var m;
+    var new_str;
+    if(str!=""){
+       str = str.replace(/\n|\r/g," *@@* ");
+       new_str = str.replace(re," ");
+       while(new_str.indexOf(' *@@* ')!=-1){
+           new_str = new_str.replace(" *@@* ","\n");
+       }
+             
+    }
+    jQuery('#texto').val(new_str) 
+    });
 })
