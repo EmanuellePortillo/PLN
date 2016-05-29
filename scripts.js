@@ -49,11 +49,15 @@ jQuery(document).ready(function(e){
             for (var i = 0; i < lines.length; i++) {                
                 var line = lines[i];
                 if(line == '') {
-                    vacios++;
+                    vacios++;                    
+                    if(text.contar()+vacios == lines.length){
+                        text_stemmer(text);
+                        jQuery('#progreso').attr("aria-valuenow",(text.contar()+vacios)/lines.length*100).css('width',((text.contar()+vacios)/lines.length*100) + "%").html(Math.round((text.contar()+vacios)/lines.length*100,2)+" % ");
+                    }
                     continue;
                 }
                 words = line.split(/([\wñáéíóú]+)+/i);
-                console.log(words);
+                /*console.log(words);
                 var worker = new Worker('stemmer.js');
 
                 worker.onmessage = function(e) {
@@ -71,17 +75,21 @@ jQuery(document).ready(function(e){
                 //start the worker
                 worker.postMessage({ 
                     'value': {'palabras':words,'contador':i,'lines':lines.length}
-                });
-                /*setTimeout(function(words,i,lines){
+                });*/
+                setTimeout(function(words,i,lines){
                     var new_words = [];
                     for(j = 0; j < words.length; j++){
-                        var word = words[j];                    
+                        var word = words[j];           
+                        if(word == '')continue;                   
                         new_words.push(Stemmer.stemm(word));                    
                     }
-                    jQuery('#texto').val(jQuery('#texto').val()+new_words.join(" ") + "\n");
-                    
-                    jQuery('#progreso').attr("aria-valuenow",i/lines.length*100).css('width',(i/lines.length*100) + "%").html(Math.round(i/lines.length*100,2)+" % ");
-                }.bind(this,words,i,lines),8);*/
+                    text[i] = new_words.join("").replace(/\s+/," ");
+                    //jQuery('#texto').val(jQuery('#texto').val()+new_words.join(" ") + "\n");
+                    if(text.contar()+vacios == lines.length){
+                        text_stemmer(text);
+                    }
+                    jQuery('#progreso').attr("aria-valuenow",(text.contar()+vacios)/lines.length*100).css('width',((text.contar()+vacios)/lines.length*100) + "%").html(Math.round((text.contar()+vacios)/lines.length*100,2)+" % ");
+                }.bind(this,words,i,lines),8);
             }
             ban_stemmer = true;
         }
