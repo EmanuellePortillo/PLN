@@ -55,3 +55,8 @@ textarea{
 input[type="checkbox"]{
     visibility: hidden;
 }
+#progreso{
+    -webkit-transition: none;
+    -o-transition: none;
+    transition: none;
+}

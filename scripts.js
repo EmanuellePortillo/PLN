@@ -37,21 +37,51 @@ var dropZone = document.getElementById('drop_zone');
 dropZone.addEventListener('dragover', handleDragOver, false);
 dropZone.addEventListener('drop', handleFileSelect, false);
 var ban_stemmer = false;
+var vacios = 0;
 jQuery(document).ready(function(e){
     function make_stemmer(){
+        var text = [];
         if(ban_stemmer == false){
             var lines = jQuery('#texto').val().split("\n"); ///([\wáéíóú]+) ?(\n\r?)?/gi
             jQuery('#texto').val("");
             //var new_lines = []
+            var evento = new Event('actualizar');           
             for (var i = 0; i < lines.length; i++) {                
                 var line = lines[i];
-                words = line.split(/([\wáéíóú]+) \s/i);
-                var new_words = [];
-                for(j = 0; j < words.length; j++){
-                    var word = words[j];
-                    new_words.push(Stemmer.stemm(word));
+                if(line == '') {
+                    vacios++;
+                    continue;
                 }
-                jQuery('#texto').val(jQuery('#texto').val()+new_words.join(" ") + "\n");
+                words = line.split(/([\wñáéíóú]+)+/i);
+                console.log(words);
+                var worker = new Worker('stemmer.js');
+
+                worker.onmessage = function(e) {
+                    //document.getElementById("PiValue").innerHTML = e.data.PiValue;
+                    text[e.data.i] = e.data.words.join("").replace(/\s+/," ");
+                    if(text.contar()+vacios == e.data.lines){
+                        text_stemmer(text);
+                    }
+                    jQuery('#progreso').attr("aria-valuenow",e.data.i/e.data.lines.length*100).css('width',(e.data.i/e.data.lines.length*100) + "%").html(Math.round(e.data.i/e.data.lines.length*100,2)+" % ");
+                };
+                worker.onerror = function(e) {
+                    alert('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+                };
+
+                //start the worker
+                worker.postMessage({ 
+                    'value': {'palabras':words,'contador':i,'lines':lines.length}
+                });
+                /*setTimeout(function(words,i,lines){
+                    var new_words = [];
+                    for(j = 0; j < words.length; j++){
+                        var word = words[j];                    
+                        new_words.push(Stemmer.stemm(word));                    
+                    }
+                    jQuery('#texto').val(jQuery('#texto').val()+new_words.join(" ") + "\n");
+                    
+                    jQuery('#progreso').attr("aria-valuenow",i/lines.length*100).css('width',(i/lines.length*100) + "%").html(Math.round(i/lines.length*100,2)+" % ");
+                }.bind(this,words,i,lines),8);*/
             }
             ban_stemmer = true;
         }
@@ -65,33 +95,41 @@ jQuery(document).ready(function(e){
             jQuery(this).addClass("active");
         }
     });
-   jQuery('#del-dig').click(function(e){
-    var re = /([^a-zA-Z0-9@_-]\d+)([^a-zA-Z0-9@_-])/g; 
-    var str =jQuery('#texto').val();
-    var m;
-    var new_str;
-    if(str!=""){
-       str = str.replace(/\n|\r/g," *@@* ");
-       new_str = str.replace(re," ");
-       while(new_str.indexOf(' *@@* ')!=-1){
-           new_str = new_str.replace(" *@@* ","\n");
-       }
-    }
-    jQuery('#texto').val(new_str) 
+    jQuery('#del-dig').click(function(e){
+        var re = /([^a-zA-Z0-9@_-]\d+)([^a-zA-Z0-9@_-])/g; 
+        var str =jQuery('#texto').val();
+        var m;
+        var new_str;
+        if(str!=""){
+            str = str.replace(/\n|\r/g," *@@* ");
+            new_str = str.replace(re," ");
+            while(new_str.indexOf(' *@@* ')!=-1){
+                new_str = new_str.replace(" *@@* ","\n");
+            }
+        }
+        jQuery('#texto').val(new_str) 
     });
     jQuery('#del-gui').click(function(e){
-    var re = /(\W-+)/g; 
-    var str =jQuery('#texto').val();
-    var m;
-    var new_str;
-    if(str!=""){
-       str = str.replace(/\n|\r/g," *@@* ");
-       new_str = str.replace(re," ");
-       while(new_str.indexOf(' *@@* ')!=-1){
-           new_str = new_str.replace(" *@@* ","\n");
-       }
-             
-    }
-    jQuery('#texto').val(new_str) 
+        var re = /(\W-+)/g; 
+        var str =jQuery('#texto').val();
+        var m;
+        var new_str;
+        if(str!=""){
+        str = str.replace(/\n|\r/g," *@@* ");
+        new_str = str.replace(re," ");
+        while(new_str.indexOf(' *@@* ')!=-1){
+            new_str = new_str.replace(" *@@* ","\n");
+        }
+                
+        }
+        jQuery('#texto').val(new_str) 
     });
-})
+});
+Array.prototype.contar = function(){
+    return this.filter(function(value) { return value !== undefined }).length;
+}
+function text_stemmer(texto){
+    texto.forEach(function(element) {
+        jQuery('#texto').val(jQuery('#texto').val()+element + "\n");
+    }, this);
+}
